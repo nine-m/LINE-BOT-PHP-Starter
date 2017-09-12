@@ -44,8 +44,10 @@ if (!is_null($events['events'])) {
 				if($isData > 0){
 					// Build message to reply back
 					$messages = [
-							'type' => 'text',
-							'text' => $answer
+							['type' => 'text',
+							'text' => $answer],
+							['type' => 'text',
+							'text' => $answer]
 					];					
 				} else {
 					// Build message to reply back
