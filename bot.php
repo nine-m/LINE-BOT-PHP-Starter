@@ -43,17 +43,10 @@ if (!is_null($events['events'])) {
 				
 				if($isData > 0){
 					// Build message to reply back
-					$messages = [
-						'type' => 'text',
-						'text' => $answer
-					],
-					[
-						"type": "location",
-						"title": "my location",
-						"address": "〒150-0002 東京都渋谷区渋谷２丁目２１−１",
-						"latitude": 35.65910807942215,
-						"longitude": 139.70372892916203
-					];
+					$messages[0] = [
+							'type' => 'text',
+							'text' => $answer
+					];					
 				} else {
 					// Build message to reply back
 					$messages = [
