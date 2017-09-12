@@ -24,19 +24,41 @@ if (!is_null($events['events'])) {
 			// Get replyToken
 			$replyToken = $event['replyToken'];
 
-			//หาคำตอบจาก DB
-			$mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.$text.'"}');
-			$mlab_data = json_decode($mlab_json);
-			$isData=sizeof($mlab_data);
+			//หารูปแบบการตอบกลับ (Text,Location) โดยดูจาก keyword
+			if (strpos($text, 'ค้นหารถ') !== false) {
+				$pieces = explode(" ",$text);
+				$car_no = $pieces[1];
 
-			//ถ้ามีคำตอบใน DB
-			if($isData > 0){
-				foreach($mlab_data as $rec){
-					$answer = $rec->answer;
-				}
+				$mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_location?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
+				$mlab_data = json_decode($mlab_json);
+				$isData=sizeof($mlab_data);
+
+				if($isData > 0){
+					foreach($mlab_data as $rec){
+						$answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$rec->car_location.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
+					}
+				} else {
+					$answer = "ไม่พบรถหมายเลข ".$rec->car_no.' ในระบบ';
+				}				
 			} else {
-				$answer = "พูดอะไรไม่รู้เรื่องเลย";
+
+				//หาคำตอบจาก DB
+				$mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.$text.'"}');
+				$mlab_data = json_decode($mlab_json);
+				$isData=sizeof($mlab_data);
+
+				//ถ้ามีคำตอบใน DB
+				if($isData > 0){
+					foreach($mlab_data as $rec){
+						$answer = $rec->answer;
+					}
+				} else {
+					$answer = "พูดอะไรไม่รู้เรื่องเลย";
+				}
+
 			}
+			
+
 
 			// Build message to reply back
 			$messages = [
