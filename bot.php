@@ -40,22 +40,7 @@ if (!is_null($events['events'])) {
 				} else {
 					$answer = "ไม่พบรถหมายเลข ".$rec->car_no.' ในระบบ';
 				}
-				
-				if($isData > 0){
-					// Build message to reply back
-					$messages = [
-							['type' => 'text',
-							'text' => $answer],
-							['type' => 'text',
-							'text' => $answer]
-					];					
-				} else {
-					// Build message to reply back
-					$messages = [
-						'type' => 'text',
-						'text' => $answer
-					];					
-				}
+							
 			} else {
 
 				//หาคำตอบจาก DB
@@ -71,13 +56,13 @@ if (!is_null($events['events'])) {
 				} else {
 					$answer = "พูดอะไรไม่รู้เรื่องเลย";
 				}
-
-				// Build message to reply back
-				$messages = [
-					'type' => 'text',
-					'text' => $answer
-				];
 			}
+
+			// Build message to reply back
+			$messages = [
+				'type' => 'text',
+				'text' => $answer
+			];
 
 
 
@@ -85,7 +70,15 @@ if (!is_null($events['events'])) {
 			$url = 'https://api.line.me/v2/bot/message/reply';
 			$data = [
 				'replyToken' => $replyToken,
-				'messages' => [$messages],
+				'messages' => [$messages,
+								{
+									"type": "location",
+									"title": "my location",
+									"address": "〒150-0002 東京都渋谷区渋谷２丁目２１−１",
+									"latitude": 35.65910807942215,
+									"longitude": 139.70372892916203
+								}
+							  ]
 			];
 			$post = json_encode($data);
 			$headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
