@@ -4,6 +4,11 @@ $proxyauth = 'fixie:NnwPBqm5tR6Jtx5';
 
 $access_token = 'QDd6Ba0wLQlflnU/kxWlc3rGTLBX/ioj+2T/SfAp8oxT/1p2sEZoOLhXJAL21PxO2hw+TCQ+Xlqhr/aGozTEsZRf7yDIwV+j/hKYlIxpBDUmnOE3IQIXzbY8BY12i66iaKVRzuJ6Z3WYnxIA27xSdwdB04t89/1O/w1cDnyilFU=';
 
+//mlab config
+$mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
+$mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
+
+
 // Get POST body content
 $content = file_get_contents('php://input');
 // Parse JSON
@@ -19,10 +24,24 @@ if (!is_null($events['events'])) {
 			// Get replyToken
 			$replyToken = $event['replyToken'];
 
+			//หาคำตอบจาก DB
+			$mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.$text.'"}');
+			$mlab_data = json_decode($mlab_json);
+			$isData=sizeof($mlab_data);
+
+			//ถ้ามีคำตอบใน DB
+			if($isData > 0){
+				foreach($mlab_data as $rec){
+					$answer = $rec->answer;
+				}
+			} else {
+				$answer = "พูดอะไรไม่รู้เรื่องเลย";
+			}
+
 			// Build message to reply back
 			$messages = [
 				'type' => 'text',
-				'text' => $text
+				'text' => $answer
 			];
 
 			// Make a POST Request to Messaging API to reply to sender
