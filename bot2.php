@@ -11,7 +11,7 @@ $mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?api
 if (!empty($bot->isEvents)) {
 
     if($bot->isText){
-        $bot->replyMessageNew($bot->replyToken, json_encode($bot->text));
+        $bot->replyMessageNew($bot->replyToken, $bot->text);
     } else {
         $bot->replyMessageNew($bot->replyToken, json_encode($bot->message));
     }
