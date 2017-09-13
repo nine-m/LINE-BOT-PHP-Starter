@@ -68,7 +68,7 @@ if (!is_null($events['events'])) {
 
 			$lineApi = new LINE_API;
 
-			$lineAPI->replyMessage($replyToken,$messages);
+			$lineApi->replyMessage($replyToken,$messages);
 
 
 
