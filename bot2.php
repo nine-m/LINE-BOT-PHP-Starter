@@ -23,16 +23,16 @@ if (!empty($bot->isEvents)) {
 
             $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_location?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
             $mlab_data = json_decode($mlab_json);
-            $isData=sizeof($mlab_data);
+            $isData = sizeof($mlab_data);
 
             if($isData > 0){
                 foreach($mlab_data as $rec){
                     $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$rec->car_location.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
                     $bot->replyMessageNew($bot->replyToken, $answer);
-                    $bot->replyLocation("ทดสอบ","ทดสอบ",40,40);
+                    $bot->replyLocation($rec->car_location,$rec->car_location,$rec->long,$rec->lat);
                 }
             } else {
-                $answer = "ไม่พบรถหมายเลข ".$rec->car_no.' ในระบบ';
+                $answer = "ไม่พบรถหมายเลข ".$car_no.' ในระบบ';
                 $bot->replyMessageNew($bot->replyToken, $answer);
             }        
 
