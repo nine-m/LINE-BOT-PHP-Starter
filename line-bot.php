@@ -103,8 +103,8 @@ class BOT_API extends LINEBot {
         ]);
     }
 
-    public function replyLocation ($replyToken = null, $message = null) {
-        $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder("Eiffel Tower", "Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France", 48.858328, 2.294750);
+    public function replyLocation ($title = '',$address='',$lat=13.7177873,$long=100.5239869) {
+        $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder($title ,$address, $lat, $long);
         $this->response = $this->httpClient->post($this->endpointBase . '/v2/bot/message/push', [
             'to' => $this->userid,
             'messages'   => $messageBuilder->buildMessage(),
