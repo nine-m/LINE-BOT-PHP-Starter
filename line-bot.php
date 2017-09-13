@@ -32,6 +32,8 @@ class BOT_API extends LINEBot {
     public $source          = null;
     public $message         = null;
     public $timestamp       = null;
+
+    public $userid          = null;
 	
     public $response        = null;
 	
@@ -72,7 +74,10 @@ class BOT_API extends LINEBot {
                 if ($event['type'] == 'message' && $event['message']['type'] == 'sticker') {
                     $this->isSticker = true;
                 }
-				
+
+                if ($event['type'] == 'message'){
+                    $this->userid = $event['source']['userId'];
+                }
             }
 
         }
@@ -100,8 +105,8 @@ class BOT_API extends LINEBot {
 
     public function replyLocation ($replyToken = null, $message = null) {
         $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder("Eiffel Tower", "Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France", 48.858328, 2.294750);
-        $this->response = $this->httpClient->post($this->endpointBase . '/v2/bot/message/reply', [
-            'replyToken' => $replyToken,
+        $this->response = $this->httpClient->post($this->endpointBase . '/v2/bot/message/push', [
+            'to' => $userid,
             'messages'   => $messageBuilder->buildMessage(),
         ]);
     }    
