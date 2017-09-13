@@ -28,4 +28,36 @@ class LINE_API {
 
 			echo $result . "\r\n";
     }
+
+    public function replyLocation($replyToken = null){
+        // Make a POST Request to Messaging API to reply to sender
+        $url = 'https://api.line.me/v2/bot/message/reply';
+        $data = [
+            'replyToken' => $replyToken,
+            'messages' => [
+                {
+                    'type':'location',
+                    'title':'My Location',
+                    'address':'ทดสอบ',
+                    'latitude':35.65910807942215,
+                    'longtitude':139.70372892916203
+                }
+            ]
+        ];
+        $post = json_encode($data);
+        $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $this->access_token);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_PROXY, $this->proxy);  //proxy
+        curl_setopt($ch, CURLOPT_PROXYUSERPWD, $this->proxyauth); //proxy
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        echo $result . "\r\n";
+}
 }
