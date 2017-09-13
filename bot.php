@@ -1,4 +1,6 @@
 <?php
+include('LineAPI.php');
+
 $proxy = 'velodrome.usefixie.com:80';
 $proxyauth = 'fixie:NnwPBqm5tR6Jtx5';
 
@@ -64,29 +66,33 @@ if (!is_null($events['events'])) {
 				'text' => $answer
 			];
 
+			$lineApi = new LINE_API;
+
+			$lineAPI->replyMessage($replyToken,$messages);
 
 
-			// Make a POST Request to Messaging API to reply to sender
-			$url = 'https://api.line.me/v2/bot/message/reply';
-			$data = [
-				'replyToken' => $replyToken,
-				'messages' => [$messages]
-			];
-			$post = json_encode($data);
-			$headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
 
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-			curl_setopt($ch, CURLOPT_PROXY, $proxy);  //proxy
-			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth); //proxy
-			$result = curl_exec($ch);
-			curl_close($ch);
+			// // Make a POST Request to Messaging API to reply to sender
+			// $url = 'https://api.line.me/v2/bot/message/reply';
+			// $data = [
+			// 	'replyToken' => $replyToken,
+			// 	'messages' => [$messages]
+			// ];
+			// $post = json_encode($data);
+			// $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $access_token);
 
-			echo $result . "\r\n";
+			// $ch = curl_init($url);
+			// curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+			// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			// curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+			// curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+			// curl_setopt($ch, CURLOPT_PROXY, $proxy);  //proxy
+			// curl_setopt($ch, CURLOPT_PROXYUSERPWD, $proxyauth); //proxy
+			// $result = curl_exec($ch);
+			// curl_close($ch);
+
+			// echo $result . "\r\n";
 		}
 	}
 }
