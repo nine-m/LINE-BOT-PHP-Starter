@@ -29,7 +29,7 @@ if (!empty($bot->isEvents)) {
                 foreach($mlab_data as $rec){
                     $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$rec->car_location.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
                     $bot->replyMessageNew($bot->replyToken, $answer);
-                    $bot->replyLocation("ทดสอบ","ทดสอบ",100,100);
+                    $bot->replyLocation("ทดสอบ","ทดสอบ",40,40);
                 }
             } else {
                 $answer = "ไม่พบรถหมายเลข ".$rec->car_no.' ในระบบ';
@@ -50,6 +50,7 @@ if (!empty($bot->isEvents)) {
             } else {
                 $answer = "พูดอะไรไม่รู้เรื่องเลย";
             }
+            $bot->replyMessageNew($bot->replyToken, $answer);
         }
     } else {
         //$bot->replyMessageNew($bot->replyToken, $bot->message);
