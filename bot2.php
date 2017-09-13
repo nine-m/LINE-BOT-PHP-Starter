@@ -28,12 +28,14 @@ if (!empty($bot->isEvents)) {
             if($isData > 0){
                 foreach($mlab_data as $rec){
                     $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$rec->car_location.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
+                    $bot->replyMessageNew($bot->replyToken, $answer);
+                    $bot->replyLocation($rec->car_no,$rec->car_location,$rec->lat,$rec->long);
                 }
             } else {
                 $answer = "ไม่พบรถหมายเลข ".$rec->car_no.' ในระบบ';
+                $bot->replyMessageNew($bot->replyToken, $answer);
             }        
-            $bot->replyMessageNew($bot->replyToken, $answer);
-            $bot->replyLocation($mlab_data[0]->car_no,$mlab_data[0]->car_location,$mlab_data[0]->lat,$mlab_data[0]->long);
+
         } else {
             //หาคำตอบจาก DB
             $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.$text.'"}');
