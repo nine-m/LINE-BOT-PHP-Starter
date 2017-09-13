@@ -70,6 +70,8 @@ if (!is_null($events['events'])) {
 
 			$lineApi->replyMessage($replyToken,$messages);
 
+			$lineApi2 = new LINE_API;
+
 			$messages2 = [
 				'type' => 'location',
 				'title' => 'L-001',
@@ -78,7 +80,7 @@ if (!is_null($events['events'])) {
 				'longtitude' => 139.70372892916203
 			];
 
-			$lineApi->replyMessage($replyToken,$messages2);
+			$lineApi2->replyMessage($replyToken,$messages2);
 
 
 			// // Make a POST Request to Messaging API to reply to sender
