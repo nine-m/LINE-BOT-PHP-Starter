@@ -8,6 +8,7 @@ use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot\MessageBuilder;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 
+
 class BOT_API extends LINEBot {
 	
     /* ====================================================================================
@@ -96,6 +97,14 @@ class BOT_API extends LINEBot {
             'messages'   => $messageBuilder->buildMessage(),
         ]);
     }
+
+    public function replyLocation ($replyToken = null, $message = null) {
+        $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder("Eiffel Tower", "Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France", 48.858328, 2.294750);
+        $this->response = $this->httpClient->post($this->endpointBase . '/v2/bot/message/reply', [
+            'replyToken' => $replyToken,
+            'messages'   => $messageBuilder->buildMessage(),
+        ]);
+    }    
 	
     public function isSuccess () {
         return !empty($this->response->isSucceeded()) ? true : false;

@@ -13,7 +13,8 @@ if (!empty($bot->isEvents)) {
     if($bot->isText){
         $bot->replyMessageNew($bot->replyToken, $bot->text);
     } else {
-        $bot->replyMessageNew($bot->replyToken, $bot->message);
+        //$bot->replyMessageNew($bot->replyToken, $bot->message);
+        $bot->replyLocation($bot->replyToken, $bot->message);
     }
 
 	
