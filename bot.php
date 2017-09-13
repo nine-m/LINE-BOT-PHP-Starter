@@ -70,6 +70,15 @@ if (!is_null($events['events'])) {
 
 			$lineApi->replyMessage($replyToken,$messages);
 
+			$messages = [
+				'type' => 'location',
+				'title' => 'L-001',
+				'Address' => 'ทดสอบ',
+				'latitude' => '35.65910807942215',
+				'longtitude' => '139.70372892916203'
+			];
+
+			$lineApi->replyMessage($replyToken,$messages);
 
 
 			// // Make a POST Request to Messaging API to reply to sender
