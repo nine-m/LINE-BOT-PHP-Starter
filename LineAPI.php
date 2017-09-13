@@ -31,18 +31,12 @@ class LINE_API {
 
     public function replyLocation($replyToken = null){
         // Make a POST Request to Messaging API to reply to sender
+        $testdata = "{'type':'location','title':'My Location', 'address':'ทดสอบ','latitude':35.65910807942215,'longtitude':139.70372892916203 }";
+
         $url = 'https://api.line.me/v2/bot/message/reply';
         $data = [
             'replyToken' => $replyToken,
-            'messages' => [
-                {
-                    'type':'location',
-                    'title':'My Location',
-                    'address':'ทดสอบ',
-                    'latitude':35.65910807942215,
-                    'longtitude':139.70372892916203
-                }
-            ]
+            'messages' => [$testdata]
         ];
         $post = json_encode($data);
         $headers = array('Content-Type: application/json', 'Authorization: Bearer ' . $this->access_token);
