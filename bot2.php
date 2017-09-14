@@ -12,6 +12,8 @@ $bot = new BOT_API($channelSecret, $access_token);
 //mlab config
 $mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
 $mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
+
+$map_api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=true&region=th&language=th&latlng=';
 	
 if (!empty($bot->isEvents)) {
 
@@ -27,9 +29,12 @@ if (!empty($bot->isEvents)) {
 
             if($isData > 0){
                 foreach($mlab_data as $rec){
-                    $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$rec->car_location.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
+                    $map_addr_json = file_get_contents($map_api_url.$rec->lat.','.$rec->long);
+                    $map_addr_data = json_decode($map_addr_json);
+                    
+                    $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
                     $bot->replyMessageNew($bot->replyToken, $answer);
-                    $bot->replyLocation($rec->car_no,$rec->car_location,$rec->lat,$rec->long);
+                    $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$rec->lat,$rec->long);
                 }
             } else {
                 $answer = "ไม่พบรถหมายเลข ".$car_no.' ในระบบ';
