@@ -46,7 +46,7 @@ if (!empty($bot->isEvents)) {
                              //var_dump($rec2);
                              $map_dist_json = file_get_contents($map_dist_url.'&origins='.$rec->lat.','.$rec->long.'&destinations='.$rec2->latlng);
                              $map_dist_data = json_decode( $map_dist_json);
-                             $answer2 = $answer2." รถคันนี้จะถึงปลายทางที่ ".$rec2->id.": ".$map_dist_data->destination_addresses[0].' ในอีก '.$map_dist_data->rows[0]->elements[0]->duration->text.'\n'; 
+                             $answer2 = $answer2." รถคันนี้จะถึงปลายทางที่ ".$rec2->id.": ".$map_dist_data->destination_addresses[0].' ในอีก '.$map_dist_data->rows[0]->elements[0]->duration->text.'<br />'; 
                          };
                         $bot->sendMessageNew($bot->userid,$answer2);
                     };
