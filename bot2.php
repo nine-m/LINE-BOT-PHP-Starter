@@ -38,7 +38,7 @@ if (!empty($bot->isEvents)) {
                     $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$rec->lat,$rec->long);
                     
                     ///////////////// หาจุดหมายรถ ///////////////////////////
-                    $answer2 = "รายงานจุดหมายรถ\n=======================\n\n";
+                    $answer2 = "รายงานจุดหมายรถ\n=======================\n";
                     $car_dest_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_dest?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
                     $car_dest_data = json_decode($car_dest_json);
                     if (sizeof($car_dest_data) > 0){
@@ -46,7 +46,7 @@ if (!empty($bot->isEvents)) {
                              //var_dump($rec2);
                              $map_dist_json = file_get_contents($map_dist_url.'&origins='.$rec->lat.','.$rec->long.'&destinations='.$rec2->latlng);
                              $map_dist_data = json_decode( $map_dist_json);
-                             $answer2 = $answer2."\nรถคันนี้จะถึงปลายทางที่ ".$rec2->id.": ".$map_dist_data->destination_addresses[0]." ในอีก ".$map_dist_data->rows[0]->elements[0]->duration->text."\n"; 
+                             $answer2 = $answer2."\nรถคันนี้จะถึงปลายทางที่ ".$rec2->id.": \n".$map_dist_data->destination_addresses[0]."\nในอีก ".$map_dist_data->rows[0]->elements[0]->duration->text."\n"; 
                          };
                         $bot->sendMessageNew($bot->userid,$answer2);
                     };
