@@ -14,6 +14,7 @@ $mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
 $mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
 
 $map_api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=true&region=th&language=th&latlng=';
+$map_dist_url = 'https://maps.googleapis.com/maps/api/distancematrix/json?language=th';
 	
 if (!empty($bot->isEvents)) {
 
@@ -35,6 +36,22 @@ if (!empty($bot->isEvents)) {
                     $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
                     $bot->replyMessageNew($bot->replyToken, $answer);
                     $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$rec->lat,$rec->long);
+                    
+                    ///////////////// หาจุดหมายรถ ///////////////////////////
+                    $answer2 = "";
+                    $car_dest_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_dest?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
+                    $car_dest_data = json_decode($car_dest_json);
+                    if (sizeof($car_dest_data) > 0){
+                         foreach ($car_dest_data[0]->dest as $rec2){
+                             //var_dump($rec2);
+                             $map_dist_json = file_get_contents($map_dist_url.'&origins='.$rec->lat.','.$rec->long.'&destinations='.$rec2->latlng);
+                             $map_dist_data = json_decode( $map_dist_json);
+                             $answer2 = $answer2." รถคันนี้จะถึงปลายทางที่ ".$rec2->id.": ".$map_dist_data->destination_addresses[0].' ในอีก '.$map_dist_data->rows[0]->elements[0]->duration->text; 
+                         };
+                        $bot->sendMessageNew($bot->userid,$answer2);
+                    };
+                    ///////////////////////////////////////////////////////
+
                 }
             } else {
                 $answer = "ไม่พบรถหมายเลข ".$car_no.' ในระบบ';
