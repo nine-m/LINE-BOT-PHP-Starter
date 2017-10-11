@@ -1,5 +1,6 @@
 <?php
 include ('line-bot.php');
+date_default_timezone_set("Asia/Bangkok");
 
 $channelSecret = '8c8824d765fe14b40b05dc83294764a5';
 $access_token  = 'QDd6Ba0wLQlflnU/kxWlc3rGTLBX/ioj+2T/SfAp8oxT/1p2sEZoOLhXJAL21PxO2hw+TCQ+Xlqhr/aGozTEsZRf7yDIwV+j/hKYlIxpBDUmnOE3IQIXzbY8BY12i66iaKVRzuJ6Z3WYnxIA27xSdwdB04t89/1O/w1cDnyilFU=';
@@ -13,8 +14,15 @@ $bot = new BOT_API($channelSecret, $access_token);
 $mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
 $mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
 
+//google api config
 $map_api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=true&region=th&language=th&latlng=';
 $map_dist_url = 'https://maps.googleapis.com/maps/api/distancematrix/json?language=th';
+
+//eyefleet config
+$eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user=lineadmin&pass=admin14';
+
+
+$isError = false;
 	
 if (!empty($bot->isEvents)) {
 
@@ -24,16 +32,62 @@ if (!empty($bot->isEvents)) {
             $pieces = explode(" ",$bot->text);
             $car_no = $pieces[1];
 
-            $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_location?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
-            $mlab_data = json_decode($mlab_json);
-            $isData = sizeof($mlab_data);
+            // $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_location?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
+            // $mlab_data = json_decode($mlab_json);
+            // $isData = sizeof($mlab_data);
+
+            $mlab_trucks = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/TRUCKS?apiKey='.$mlab_api_key.'&q={"TRUCK_NO":"'.$car_no.'"}');
+            $trucks = json_decode($mlab_trucks);
+            $isData = sizeof($trucks);
 
             if($isData > 0){
-                foreach($mlab_data as $rec){
-                    $map_addr_json = file_get_contents($map_api_url.$rec->lat.','.$rec->long);
-                    $map_addr_data = json_decode($map_addr_json);
+                foreach($trucks  as $truck){
+                    //ค้นหาตำแหน่งรถจากระบบ eye-fleet
+                    $current_date_text = date("Y-m-d");
+                    $current_time = strtotime('-1 minutes');
+                    $current_time_text = date("H:i:s",$current_time);
+            
+                    $eyefleet_xml = file_get_contents($eyefleet_url.'&mid='.$truck->MID.'&date='.$current_date_text.'%20'.$current_time_text);
                     
-                    $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
+                    //retry to get location 
+                    if (strlen($eyefleet_xml) < 60) {
+                        //echo 'loop 2';
+                        $current_time = strtotime('-4 minutes');
+                        $current_time_text = date("H:i:s",$current_time);
+                        $eyefleet_xml = file_get_contents($eyefleet_url.'&mid='.$truck->MID.'&date='.$current_date_text.'%20'.$current_time_text);
+                    }
+            
+                    if (strlen($eyefleet_xml) < 60) {
+                        $isError = true;
+                    } else {
+                        $xml=simplexml_load_string($eyefleet_xml) or die("Error: Cannot create object");
+                    }
+            
+            
+                    // echo ' lat:'.$xml->data[0]->lat;
+                    // echo ' lng:'.$xml->data[0]->lng;
+                    // echo ' spd:'.$xml->data[0]->spd;
+
+                    if (!$isError){
+                        
+                        $map_addr_json = file_get_contents($map_api_url.$xml->data[0]->lat.','.$xml->data[0]->lng);
+                        $map_addr_data = json_decode($map_addr_json);
+            
+                        if( intval($xml->data[0]->spd) == 0) {
+                            $answer = 'รถหมายเลข '.$truck->TRUCK_NO.' ทะเบียน '.$truck->TRUCK_REGIST.' จอดอยู่ที่ '.$map_addr_data->results[0]->formatted_address;
+                        } else {
+                            $answer = 'รถหมายเลข '.$truck->TRUCK_NO.' ทะเบียน '.$truck->TRUCK_REGIST.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$xml->data[0]->spd.' กม/ชม';
+                        }
+                    
+                    } else {
+                        $answer = 'การสื่อสารระบบ GPS ขัดข้องหรือไม่มีข้อมูลพิกัดในระบบ กรุณาลองใหม่อีกครั้ง!!!!';
+                    }
+
+                    // $map_addr_json = file_get_contents($map_api_url.$rec->lat.','.$rec->long);
+                    // $map_addr_data = json_decode($map_addr_json);
+                    
+                    // $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
+
                     $bot->replyMessageNew($bot->replyToken, $answer);
                     $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$rec->lat,$rec->long);
                     
@@ -44,7 +98,7 @@ if (!empty($bot->isEvents)) {
                     if (sizeof($car_dest_data) > 0){
                          foreach ($car_dest_data[0]->dest as $rec2){
                              //var_dump($rec2);
-                             $map_dist_json = file_get_contents($map_dist_url.'&origins='.$rec->lat.','.$rec->long.'&destinations='.$rec2->latlng);
+                             $map_dist_json = file_get_contents($map_dist_url.'&origins='.$xml->data[0]->lat.','.$xml->data[0]->lng.'&destinations='.$rec2->latlng);
                              $map_dist_data = json_decode( $map_dist_json);
                              $answer2 = $answer2."\nรถคันนี้จะถึงปลายทางที่ ".$rec2->id.": \n".$map_dist_data->destination_addresses[0]."\nในอีก ".$map_dist_data->rows[0]->elements[0]->duration->text."\n"; 
                          };
