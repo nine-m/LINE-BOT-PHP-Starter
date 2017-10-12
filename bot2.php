@@ -91,7 +91,7 @@ if (!empty($bot->isEvents)) {
                     $bot->replyMessageNew($bot->replyToken, $answer);
 
                     if (!$isError) {
-                        $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$xml->data[0]->lat,$xml->data[0]->lng);
+                        $bot->replyLocation($truck->TRUCK_NO,$map_addr_data->results[0]->formatted_address,$xml->data[0]->lat,$xml->data[0]->lng);
                     }
 
                     
