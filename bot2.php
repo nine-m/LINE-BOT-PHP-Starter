@@ -89,7 +89,11 @@ if (!empty($bot->isEvents)) {
                     // $answer = 'รถหมายเลข '.$rec->car_no.' วิ่งอยู่ที่ '.$map_addr_data->results[0]->formatted_address.' ด้วยความเร็ว '.$rec->car_speed.' กม/ชม';
 
                     $bot->replyMessageNew($bot->replyToken, $answer);
-                    $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$rec->lat,$rec->long);
+
+                    if (!$isError) {
+                        $bot->replyLocation($rec->car_no,$map_addr_data->results[0]->formatted_address,$xml->data[0]->lat,$xml->data[0]->lng);
+                    }
+
                     
                     ///////////////// หาจุดหมายรถ ///////////////////////////
                     $answer2 = "รายงานจุดหมายรถ\n=======================\n";
