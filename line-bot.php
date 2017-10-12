@@ -104,9 +104,9 @@ class BOT_API extends LINEBot {
     }
 
     public function replyLocation ($title,$address,$latitude,$longtitude) {
-        $a = 100;
-        $b = 100;
-        $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder($title, $address,$latitude, $longtitude);
+        $a = 10;
+        $b = 10;
+        $messageBuilder = new \LINE\LINEBot\MessageBuilder\LocationMessageBuilder($title, $address,$a, $b);
         $this->response = $this->httpClient->post($this->endpointBase . '/v2/bot/message/push', [
             'to' => $this->userid,
             'messages'   => $messageBuilder->buildMessage(),
