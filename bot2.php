@@ -141,7 +141,7 @@ if (!empty($bot->isEvents)) {
 
         } else {
             //หาคำตอบจาก DB
-            $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.$bot->text.'"}');
+            $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'&q={"question":"'.urlencode($bot->text).'"}');
             $mlab_data = json_decode($mlab_json);
             $isData=sizeof($mlab_data);
 
