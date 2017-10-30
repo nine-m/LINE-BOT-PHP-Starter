@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set("Asia/Bangkok");
 $mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
-$car_no = "L132";
+$car_no = "L04";
 //$mid = '25391';
 $mlab_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_location?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
 $mlab_data = json_decode($mlab_json);
@@ -15,6 +15,8 @@ $eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user=lineadmin&pass=a
 $mlab_trucks = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/TRUCKS?apiKey='.$mlab_api_key.'&q={"TRUCK_NO":"'.$car_no.'"}');
 $trucks = json_decode($mlab_trucks);
 $isData = sizeof($trucks);
+
+$send_api_url = "https://send.sahaviriyalogistics.com/linev2/?username=eyefleet&password=eye_fleet_SeND";
 
 $isError = false;
 
@@ -30,7 +32,7 @@ if($isData > 0){
         //retry to get location 
         if (strlen($eyefleet_xml) < 60) {
             //echo 'loop 2';
-            $current_time = strtotime('-4 minutes');
+            $current_time = strtotime('-5 minutes');
             $current_time_text = date("H:i:s",$current_time);
             $eyefleet_xml = file_get_contents($eyefleet_url.'&mid='.$truck->MID.'&date='.$current_date_text.'%20'.$current_time_text);
         }
@@ -62,9 +64,29 @@ if($isData > 0){
         } else {
             $answer = 'การสื่อสารระบบ GPS ขัดข้องหรือไม่มีข้อมูลพิกัดในระบบ กรุณาลองใหม่อีกครั้ง!!!!';
         }
+        
 
+        $answer_dn = "";
+        $send_data_json = file_get_contents($send_api_url.'&work_date='.date("d/m/Y").'&truck='.urlencode($truck->TRUCK_REGIST));
+        $send_data = json_decode($send_data_json);
 
+        if (sizeof($send_data) > 0){
+            foreach ($send_data as $send) {
+                $answer_dn = "\n งานวันนี้ : \n ===================== \n" ;
+                $answer_dn = $answer_dn."DN : ".$send->DN_NO."\n ";
+                $answer_dn = $answer_dn."JOB : ".$send->JOB_NO."\n ";
+                $answer_dn = $answer_dn."DRIVER : ".$send->DRIVER."\n ";
+                $answer_dn = $answer_dn."TEL : ".$send->TEL."\n ";
+                $answer_dn = $answer_dn."CUSTOMER : ".$send->CUSTOMER_NO."\n ";
+                $answer_dn = $answer_dn."RECEIVER : ".$send->RECEIVER."\n ";
+                $answer_dn = $answer_dn."PRODUCT : ".$send->PRODUCT."\n ";
+                $answer_dn = $answer_dn."WEIGHT : ".$send->WEIGHT."\n ";
+                $answer_dn = $answer_dn."========================= \n";
+            }
+        }
+        echo str_replace("\n","<br>",$answer_dn);
 
+        $answer2 = "";
         $car_dest_json = file_get_contents('https://api.mlab.com/api/1/databases/nine-m/collections/car_dest?apiKey='.$mlab_api_key.'&q={"car_no":"'.$car_no.'"}');
         $car_dest_data = json_decode($car_dest_json);
         if (sizeof($car_dest_data) > 0){

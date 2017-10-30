@@ -93,6 +93,29 @@ if (!empty($bot->isEvents)) {
                     if (!$isError) {
                         $bot->replyLocation($truck->TRUCK_NO,$map_addr_data->results[0]->formatted_address,$xml->data[0]->lat,$xml->data[0]->lng);
                     }
+                    ///////////////// ข้อมูลงานวิ่ง ///////////////////////////
+                    $send_api_url = "https://send.sahaviriyalogistics.com/linev2/?username=eyefleet&password=eye_fleet_SeND";
+                    $answer_dn = "";
+                    $send_data_json = file_get_contents($send_api_url.'&work_date='.date("d/m/Y").'&truck='.urlencode($truck->TRUCK_REGIST));
+                    $send_data = json_decode($send_data_json);
+            
+                    if (sizeof($send_data) > 0){
+                        foreach ($send_data as $send) {
+                            $answer_dn = "\n งานวันนี้ : \n ===================== \n" ;
+                            $answer_dn = $answer_dn."DN : ".$send->DN_NO."\n ";
+                            $answer_dn = $answer_dn."JOB : ".$send->JOB_NO."\n ";
+                            $answer_dn = $answer_dn."DRIVER : ".$send->DRIVER."\n ";
+                            $answer_dn = $answer_dn."TEL : ".$send->TEL."\n ";
+                            $answer_dn = $answer_dn."CUSTOMER : ".$send->CUSTOMER_NO."\n ";
+                            $answer_dn = $answer_dn."RECEIVER : ".$send->RECEIVER."\n ";
+                            $answer_dn = $answer_dn."PRODUCT : ".$send->PRODUCT."\n ";
+                            $answer_dn = $answer_dn."WEIGHT : ".$send->WEIGHT."\n ";
+                            $answer_dn = $answer_dn."========================= \n";
+                        }
+                        $bot->sendMessageNew($bot->userid,$answer_dn);
+                    } 
+
+
 
                     
                     ///////////////// หาจุดหมายรถ ///////////////////////////
