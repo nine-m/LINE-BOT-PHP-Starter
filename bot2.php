@@ -101,7 +101,7 @@ if (!empty($bot->isEvents)) {
             
                     if (sizeof($send_data) > 0){
                         foreach ($send_data as $send) {
-                            $answer_dn = "\n งานวันนี้ : \n ===================== \n" ;
+                            $answer_dn = "\n งานวันนี้ : \n===================\n" ;
                             $answer_dn = $answer_dn."DN : ".$send->DN_NO."\n ";
                             $answer_dn = $answer_dn."JOB : ".$send->JOB_NO."\n ";
                             $answer_dn = $answer_dn."DRIVER : ".$send->DRIVER."\n ";
@@ -110,7 +110,7 @@ if (!empty($bot->isEvents)) {
                             $answer_dn = $answer_dn."RECEIVER : ".$send->RECEIVER."\n ";
                             $answer_dn = $answer_dn."PRODUCT : ".$send->PRODUCT."\n ";
                             $answer_dn = $answer_dn."WEIGHT : ".$send->WEIGHT."\n ";
-                            $answer_dn = $answer_dn."========================= \n";
+                            $answer_dn = $answer_dn."====================\n";
                         }
                         $bot->sendMessageNew($bot->userid,$answer_dn);
                     } 
