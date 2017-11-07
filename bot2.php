@@ -13,7 +13,7 @@ $proxyauth = getenv('proxyauth', true) ?: getenv('proxyauth');
 $bot = new BOT_API($channelSecret, $access_token);
 
 //mlab config
-$mlab_api_key = 'wGv_MG_7RHOetlGwfsSENc5p-A2J9LcC';
+$mlab_api_key = getenv('mlab_api_key', true) ?: getenv('mlab_api_key');
 $mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
 
 //google api config
