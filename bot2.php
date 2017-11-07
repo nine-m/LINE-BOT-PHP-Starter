@@ -2,10 +2,12 @@
 include ('line-bot.php');
 date_default_timezone_set("Asia/Bangkok");
 
-$channelSecret = '8c8824d765fe14b40b05dc83294764a5';
-$access_token  = 'QDd6Ba0wLQlflnU/kxWlc3rGTLBX/ioj+2T/SfAp8oxT/1p2sEZoOLhXJAL21PxO2hw+TCQ+Xlqhr/aGozTEsZRf7yDIwV+j/hKYlIxpBDUmnOE3IQIXzbY8BY12i66iaKVRzuJ6Z3WYnxIA27xSdwdB04t89/1O/w1cDnyilFU=';
-$proxy = 'velodrome.usefixie.com:80';
-$proxyauth = 'fixie:NnwPBqm5tR6Jtx5';
+
+
+$channelSecret = getenv('channelSecret', true) ?: getenv('channelSecret');
+$access_token  = getenv('access_token', true) ?: getenv('access_token');
+$proxy = getenv('proxy', true) ?: getenv('proxy');
+$proxyauth = getenv('proxyauth', true) ?: getenv('proxyauth');
 
 
 $bot = new BOT_API($channelSecret, $access_token);
@@ -19,7 +21,9 @@ $map_api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=true&reg
 $map_dist_url = 'https://maps.googleapis.com/maps/api/distancematrix/json?language=th';
 
 //eyefleet config
-$eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user=lineadmin&pass=admin14';
+$eyefleetuser =  getenv('eyefleetuser', true) ?: getenv('eyefleetuser');
+$eyefleetpass =  getenv('eyefleetpass', true) ?: getenv('eyefleetpass');
+$eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user='.$eyefleetuser.'&pass='.$eyefleetpass.'$eyefleetpass';
 
 
 $isError = false;
@@ -94,7 +98,9 @@ if (!empty($bot->isEvents)) {
                         $bot->replyLocation($truck->TRUCK_NO,$map_addr_data->results[0]->formatted_address,$xml->data[0]->lat,$xml->data[0]->lng);
                     }
                     ///////////////// ข้อมูลงานวิ่ง ///////////////////////////
-                    $send_api_url = "https://send.sahaviriyalogistics.com/linev2/?username=eyefleet&password=eye_fleet_SeND";
+                    $senduser = getenv('senduser', true) ?: getenv('senduser');
+                    $sendpass = getenv('sendpass', true) ?: getenv('sendpass');
+                    $send_api_url = "https://send.sahaviriyalogistics.com/linev2/?username=".$senduser."&password=".$sendpass;
                     $answer_dn = "";
                     $send_data_json = file_get_contents($send_api_url.'&work_date='.date("d/m/Y").'&truck='.urlencode($truck->TRUCK_REGIST));
                     $send_data = json_decode($send_data_json);
