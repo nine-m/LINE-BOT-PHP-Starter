@@ -14,7 +14,7 @@ $bot = new BOT_API($channelSecret, $access_token);
 
 //mlab config
 $mlab_api_key = getenv('mlab_api_key', true) ?: getenv('mlab_api_key');
-$mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key.'';
+$mlab_url = 'https://api.mlab.com/api/1/databases/nine-m/collections/linebot?apiKey='.$mlab_api_key;
 
 //google api config
 $map_api_url = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=true&region=th&language=th&latlng=';
@@ -23,7 +23,7 @@ $map_dist_url = 'https://maps.googleapis.com/maps/api/distancematrix/json?langua
 //eyefleet config
 $eyefleetuser =  getenv('eyefleetuser', true) ?: getenv('eyefleetuser');
 $eyefleetpass =  getenv('eyefleetpass', true) ?: getenv('eyefleetpass');
-$eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user='.$eyefleetuser.'&pass='.$eyefleetpass.'$eyefleetpass';
+$eyefleet_url = 'http://www.eye-fleet.com/east/history.xml?user='.$eyefleetuser.'&pass='.$eyefleetpass;
 
 
 $isError = false;
